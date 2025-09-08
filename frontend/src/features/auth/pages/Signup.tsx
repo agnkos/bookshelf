@@ -30,7 +30,7 @@ const Signup = () => {
 
   return (
     <div className="h-screen max-h-screen flex flex-col justify-center items-center px-8 py-6 text-center bg-light-bg">
-      <div className="flex flex-col justify-center w-full p-0 md:p-6 max-h-[95%] mid:max-h-[100%] md:grid md:grid-cols-2 md:items-center md:border md:border-main-accent md:rounded-lg max-w-4xl md:shadow-[4px_4px_0px_rgb(65,174,153)] ">
+      <div className="flex flex-col justify-center w-full p-0 md:p-6 max-h-[95%] mid:max-h-[100%] md:grid md:grid-cols-2 md:items-center md:border md:border-main-accent md:rounded-lg max-w-4xl md:shadow-[4px_4px_0px_rgb(65,174,153)]">
         <img
           src={ShelfImg}
           className="mx-auto max-h-[25%] md:max-h-[80%]"
@@ -38,7 +38,7 @@ const Signup = () => {
         />
         <div className="w-full">
           <h1 className="text-4xl max-[400px]:text-3xl mb-2 font-bold text-main-accent">
-            BookJourney
+            Bookshelf
           </h1>
           <p className="text-xl max-[400px]:text-base font-medium mb-4">
             Create an account
@@ -123,12 +123,11 @@ const Signup = () => {
           </Formik>
         </div>
       </div>
-      {/* <p className="text-xs text-main-accent fixed bottom-4 left-2/4 -translate-x-2/4"> */}
-      <p className="flex grow items-end text-xs text-main-accent md:mt-4 bg-light-bg">
+      <p className="flex grow md:grow-0 items-end text-xs text-main-accent md:mt-4 bg-light-bg">
         <div>
           Image by
           <a href="https://pl.freepik.com/darmowe-wektory/recznie-rysowane-ilustracja-kregoslupa-ksiazki-o-plaskiej-konstrukcji_24307294.htm#from_view=detail_serie">
-            Freepik
+            &nbsp;Freepik
           </a>
         </div>
       </p>
