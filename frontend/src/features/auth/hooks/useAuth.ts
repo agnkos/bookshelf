@@ -8,12 +8,14 @@ export const useAuth = () => {
     queryKey: ["user"],
     queryFn: getCurrentUser,
     retry: false,
+    enabled: false,
   })
 
   const loginMutation = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       login(email, password),
-    onSuccess: (user) => queryClient.setQueryData(["user"], user),
+    // onSuccess: (user) => queryClient.setQueryData(["user"], user),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user"] }),
   })
 
   const logoutMutation = useMutation({
@@ -21,10 +23,15 @@ export const useAuth = () => {
     onSuccess: () => queryClient.removeQueries({ queryKey: ["user"] }),
   })
 
+  const refetchUser = () => {
+    userQuery.refetch()
+  }
+
   return {
     user: userQuery.data,
     isLoading: userQuery.isLoading,
     login: loginMutation.mutate,
     logout: logoutMutation.mutate,
+    refetchUser,
   }
 }
