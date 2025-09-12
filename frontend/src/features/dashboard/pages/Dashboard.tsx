@@ -1,5 +1,13 @@
+import { useAuth } from "../../auth/hooks/useAuth"
+
 const Dashboard = () => {
-  return <div>Dashboard</div>
+  const { logout } = useAuth()
+  return (
+    <>
+      <div>Dashboard</div>
+      <button onClick={() => logout()}>log out</button>
+    </>
+  )
 }
 
 export default Dashboard

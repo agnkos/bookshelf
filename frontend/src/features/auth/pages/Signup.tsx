@@ -124,12 +124,10 @@ const Signup = () => {
         </div>
       </div>
       <p className="flex grow md:grow-0 items-end text-xs text-main-accent md:mt-4 bg-light-bg">
-        <div>
-          Image by
-          <a href="https://pl.freepik.com/darmowe-wektory/recznie-rysowane-ilustracja-kregoslupa-ksiazki-o-plaskiej-konstrukcji_24307294.htm#from_view=detail_serie">
-            &nbsp;Freepik
-          </a>
-        </div>
+        Image by
+        <a href="https://pl.freepik.com/darmowe-wektory/recznie-rysowane-ilustracja-kregoslupa-ksiazki-o-plaskiej-konstrukcji_24307294.htm#from_view=detail_serie">
+          &nbsp;Freepik
+        </a>
       </p>
     </div>
   )

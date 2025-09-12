@@ -19,3 +19,10 @@ export const loginUser = async (email: string, password: string) => {
   })
   return token
 }
+
+export const getUserById = async (userId: number) => {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true },
+  })
+}
