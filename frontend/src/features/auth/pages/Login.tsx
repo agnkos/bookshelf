@@ -2,17 +2,24 @@ import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import ShelfImg from "../../../assets/shelf.jpg"
 import { type LoginFormData } from "../auth.types"
+import { useAuth } from "../hooks/useAuth"
 
 const Login = () => {
-  const onSubmit = (values: LoginFormData) => console.log("values", values)
+  const { login } = useAuth()
+  const onSubmit = (values: LoginFormData) => {
+    console.log("values", values)
+    login({ email: values.email, password: values.password })
+  }
 
   const initialValues = {
-    username: "",
+    email: "",
     password: "",
   }
 
   const loginValidationSchema = Yup.object({
-    username: Yup.string().required("Username is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
     password: Yup.string().required("Password is required"),
   })
 
@@ -44,13 +51,13 @@ const Login = () => {
                   <div className="w-full">
                     <Field
                       type="text"
-                      value={values.username}
-                      name="username"
-                      placeholder="Username"
+                      value={values.email}
+                      name="email"
+                      placeholder="Email"
                       className="w-11/12 mb-1 px-4 py-2 rounded-md border"
                     />
                     <ErrorMessage
-                      name="username"
+                      name="email"
                       component="div"
                       className="text-sm text-red-500"
                     />
