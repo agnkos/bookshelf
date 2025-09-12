@@ -20,6 +20,17 @@ export const login = async (req: Request, res: Response) => {
   }
 }
 
+export const logout = (req: Request, res: Response) => {
+  try {
+    res.clearCookie("jwt", { httpOnly: true, sameSite: "none", secure: true })
+    console.log("logout successsss")
+    res.sendStatus(204)
+  } catch (err) {
+    console.log("Logout error:", err)
+    res.status(500).json({ error: "Internal server error" })
+  }
+}
+
 export const me = async (req: Request, res: Response) => {
   const userId = (req as any).user.userId
   if (!userId) {
