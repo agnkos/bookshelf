@@ -10,5 +10,6 @@ export const logout = async () => {
 
 export const getCurrentUser = async () => {
   const { data } = await api.get("/auth/me", { withCredentials: true })
+  console.log("user data", data)
   return data
 }

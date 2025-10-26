@@ -8,7 +8,7 @@ export const useAuth = () => {
     queryKey: ["user"],
     queryFn: getCurrentUser,
     retry: false,
-    enabled: false,
+    // enabled: false,
   })
 
   const loginMutation = useMutation({
@@ -24,6 +24,7 @@ export const useAuth = () => {
   })
 
   const refetchUser = () => {
+    // change refetch to setQueryData?
     userQuery.refetch()
   }
 

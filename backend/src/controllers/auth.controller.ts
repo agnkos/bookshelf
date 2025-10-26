@@ -6,7 +6,7 @@ export const signup = async (req: Request, res: Response) => {
     const user = await signupUser(req.body.email, req.body.password)
     res.json(user)
   } catch (err) {
-    res.status(400).json({ error: "Registration failed" })
+    res.status(400).json({ error: err || "Registration failed" })
   }
 }
 
@@ -14,6 +14,7 @@ export const login = async (req: Request, res: Response) => {
   try {
     const token = await loginUser(req.body.email, req.body.password)
     res.cookie("token", token, { httpOnly: true, secure: true })
+    // TODO:return user object ???
     res.json({ message: "Login successful" })
   } catch {
     res.status(401).json({ error: "Invalid credentials" })
@@ -22,7 +23,7 @@ export const login = async (req: Request, res: Response) => {
 
 export const logout = (req: Request, res: Response) => {
   try {
-    res.clearCookie("jwt", { httpOnly: true, sameSite: "none", secure: true })
+    res.clearCookie("token", { httpOnly: true, sameSite: "none", secure: true })
     console.log("logout successsss")
     res.sendStatus(204)
   } catch (err) {

@@ -4,6 +4,11 @@ import { prisma } from "../config/db"
 
 export const signupUser = async (email: string, password: string) => {
   const hashed = await bcrypt.hash(password, 10)
+  // TODO: Add check for existing user
+
+  const existingUser = await prisma.user.findUnique({ where: { email } })
+  if (existingUser) throw new Error("User already exists")
+
   return prisma.user.create({ data: { email, password: hashed } })
 }
 
