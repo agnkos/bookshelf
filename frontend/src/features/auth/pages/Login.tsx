@@ -7,7 +7,7 @@ import { useNavigate } from "react-router"
 import type { FormikHelpers } from "formik"
 
 const Login = () => {
-  const { login, refetchUser } = useAuth()
+  const { login } = useAuth()
   const navigate = useNavigate()
 
   const onSubmit = (
@@ -19,7 +19,6 @@ const Login = () => {
       {
         onSuccess: () => {
           console.log("Login successful")
-          refetchUser()
           navigate("/dashboard")
         },
         onError: (error: Error) => {
