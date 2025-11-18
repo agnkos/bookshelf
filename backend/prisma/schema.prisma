@@ -19,6 +19,7 @@ model User {
   email    String  @unique
   password String
   books    Book[]
+  refresh_token String?
 }
 
 model Book {

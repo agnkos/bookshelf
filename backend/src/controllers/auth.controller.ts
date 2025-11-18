@@ -1,5 +1,8 @@
 import { Request, Response } from "express"
+import jwt, { Secret } from "jsonwebtoken"
 import { signupUser, loginUser, getUserById } from "../services/auth.service"
+import { prisma } from "../config/db"
+import { getTokenDynamicPart } from "../utils/helpers"
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -48,6 +51,48 @@ export const me = async (req: Request, res: Response) => {
     res.json(user)
   } catch (err) {
     console.error("Error in meController:", err)
+    res.status(500).json({ message: "Internal server error" })
+  }
+}
+
+export const refresh = async (req: Request, res: Response) => {
+  const cookies = req.cookies
+  if (!cookies?.jwt) {
+    res.sendStatus(401).json({ message: "Unauthorized" })
+    return
+  }
+  const refreshToken = cookies.jwt
+
+  try {
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET as Secret
+    ) as any
+    // (err: jwt.VerifyErrors | null, decoded: any) => {
+    //   if (err) {
+    //     res.status(403).json({ message: "Invalid token" })
+    //     return
+    //   }
+
+    const dynamicToken = getTokenDynamicPart(refreshToken)
+    const user = await prisma.user.findFirst({
+      where: { refresh_token: dynamicToken },
+    })
+    if (!user || user.id !== decoded.id) {
+      return res.status(401).json({ message: "Invalid token" })
+    }
+
+    const tokenData = {
+      id: decoded.id,
+    }
+
+    const accessToken = jwt.sign(
+      tokenData,
+      process.env.ACCESS_TOKEN_SECRET as Secret,
+      { expiresIn: "10min" }
+    )
+    res.json({ accessToken })
+  } catch (err) {
     res.status(500).json({ message: "Internal server error" })
   }
 }
