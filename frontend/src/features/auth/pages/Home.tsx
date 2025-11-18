@@ -23,12 +23,10 @@ const Home = () => {
         </div>
       </div>
       <p className="flex grow md:grow-0 items-end text-xs text-main-accent md:mt-4 bg-light-bg">
-        <div>
-          Image by
-          <a href="https://pl.freepik.com/darmowe-wektory/recznie-rysowane-plaski-stos-ksiazek-ilustracji_24307396.htm#query=book&position=4&from_view=search&track=sph&uuid=b4d24fca-f528-4726-aa10-74d391a4ced2">
-            &nbsp;Freepik
-          </a>
-        </div>
+        Image by
+        <a href="https://pl.freepik.com/darmowe-wektory/recznie-rysowane-plaski-stos-ksiazek-ilustracji_24307396.htm#query=book&position=4&from_view=search&track=sph&uuid=b4d24fca-f528-4726-aa10-74d391a4ced2">
+          &nbsp;Freepik
+        </a>
       </p>
     </div>
   )

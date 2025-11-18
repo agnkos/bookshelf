@@ -2,17 +2,44 @@ import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import ShelfImg from "../../../assets/shelf.jpg"
 import { type LoginFormData } from "../auth.types"
+import { useAuth } from "../hooks/useAuth"
+import { useNavigate } from "react-router"
+import type { FormikHelpers } from "formik"
 
 const Login = () => {
-  const onSubmit = (values: LoginFormData) => console.log("values", values)
+  const { login } = useAuth()
+  const navigate = useNavigate()
+
+  const onSubmit = (
+    values: LoginFormData,
+    { setStatus, setSubmitting }: FormikHelpers<LoginFormData>
+  ) => {
+    login(
+      { email: values.email, password: values.password },
+      {
+        onSuccess: () => {
+          console.log("Login successful")
+          navigate("/dashboard")
+        },
+        onError: (error: Error) => {
+          console.error("Login error:", error)
+          setStatus("Invalid email or password")
+        },
+      }
+    )
+
+    setSubmitting(false)
+  }
 
   const initialValues = {
-    username: "",
+    email: "",
     password: "",
   }
 
   const loginValidationSchema = Yup.object({
-    username: Yup.string().required("Username is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
     password: Yup.string().required("Password is required"),
   })
 
@@ -38,19 +65,19 @@ const Login = () => {
             validationSchema={loginValidationSchema}
             onSubmit={onSubmit}
           >
-            {({ values, isSubmitting }) => {
+            {({ values, isSubmitting, status }) => {
               return (
                 <Form className="w-11/12 flex flex-col items-center gap-4 max-w-md mx-auto">
                   <div className="w-full">
                     <Field
                       type="text"
-                      value={values.username}
-                      name="username"
-                      placeholder="Username"
+                      value={values.email}
+                      name="email"
+                      placeholder="Email"
                       className="w-11/12 mb-1 px-4 py-2 rounded-md border"
                     />
                     <ErrorMessage
-                      name="username"
+                      name="email"
                       component="div"
                       className="text-sm text-red-500"
                     />
@@ -69,6 +96,11 @@ const Login = () => {
                       className="text-sm text-red-500"
                     />
                   </div>
+                  {status && (
+                    <div className="text-sm text-red-500 mb-2 text-center">
+                      {status}
+                    </div>
+                  )}
                   <button
                     type="submit"
                     className="w-11/12 px-4 py-2 mt-2 text-center bg-lighter-accent hover:bg-main-accent-hover text-light-bg font-semibold rounded-md"
@@ -83,12 +115,10 @@ const Login = () => {
         </div>
       </div>
       <p className="flex grow md:grow-0 items-end text-xs text-main-accent md:mt-4 bg-light-bg">
-        <div>
-          Image by
-          <a href="https://pl.freepik.com/darmowe-wektory/recznie-rysowane-ilustracja-kregoslupa-ksiazki-o-plaskiej-konstrukcji_24307294.htm#from_view=detail_serie">
-            &nbsp; Freepik
-          </a>
-        </div>
+        Image by
+        <a href="https://pl.freepik.com/darmowe-wektory/recznie-rysowane-ilustracja-kregoslupa-ksiazki-o-plaskiej-konstrukcji_24307294.htm#from_view=detail_serie">
+          &nbsp; Freepik
+        </a>
       </p>
     </div>
   )
