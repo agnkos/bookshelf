@@ -13,3 +13,9 @@ export const getCurrentUser = async () => {
   console.log("user data", data)
   return data
 }
+
+export const refreshAccessToken = async () => {
+  const { data } = await api.post("/auth/refresh", { withCredentials: true })
+  console.log("data access token:", data)
+  return data.accessToken
+}
