@@ -17,14 +17,15 @@ export const signupUser = async (email: string, password: string) => {
 
 export const loginUser = async (email: string, password: string) => {
   const user = await prisma.user.findUnique({ where: { email } })
+  console.log("USER", user)
   if (!user || !user.password) throw new Error("Invalid credentials")
 
   const isValid = await bcrypt.compare(password, user.password)
   if (!isValid) throw new Error("Invalid credentials")
 
   const { accessToken, refreshToken } = issueTokens(user.id)
-
   const dynamicToken = getTokenDynamicPart(refreshToken)
+
   await prisma.user.update({
     where: { id: user.id },
     data: { refresh_token: dynamicToken },

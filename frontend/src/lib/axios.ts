@@ -1,5 +1,9 @@
 import axios from "axios"
-import { refreshAccessToken } from "../features/auth/api/auth"
+import { QueryClient } from "@tanstack/react-query"
+
+import { logout, refreshAccessToken } from "../features/auth/api/auth"
+
+const queryClient = new QueryClient()
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000",
@@ -45,12 +49,18 @@ api.interceptors.response.use(
       originalRequest._retry = true
       console.log("error response", error.response)
       console.log("refreshing token...")
-      const newAccessToken = await refreshAccessToken()
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${newAccessToken}`
-      originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-      return api.request(originalRequest)
+      try {
+        const accessToken = await refreshAccessToken()
+        setAccessToken(accessToken)
+        axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`
+        console.log("accessToken", accessToken)
+        return api.request(originalRequest)
+      } catch (err) {
+        console.log("err", err)
+        await logout()
+        queryClient.removeQueries({ queryKey: ["user"] })
+      }
     }
     return Promise.reject(error)
   }

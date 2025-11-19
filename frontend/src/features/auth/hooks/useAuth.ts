@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getCurrentUser, login, logout } from "../api/auth"
+import { setAccessToken } from "../../../lib/axios"
 
 export const useAuth = () => {
   const queryClient = useQueryClient()
@@ -8,14 +9,19 @@ export const useAuth = () => {
     queryKey: ["user"],
     queryFn: getCurrentUser,
     retry: false,
-    // enabled: false,
+    enabled: false,
   })
 
   const loginMutation = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       login(email, password),
     // onSuccess: (user) => queryClient.setQueryData(["user"], user),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user"] }),
+    onSuccess: (data) => {
+      const accessToken: string = data?.accessToken ?? null
+      setAccessToken(accessToken)
+      userQuery.refetch()
+      queryClient.invalidateQueries({ queryKey: ["user"] })
+    },
   })
 
   const logoutMutation = useMutation({

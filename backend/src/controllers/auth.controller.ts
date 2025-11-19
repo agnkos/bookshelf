@@ -33,8 +33,9 @@ export const login = async (req: Request, res: Response) => {
     })
     // TODO:return user object ???
     res.status(200).send({ accessToken })
-    res.json({ message: "Login successful" })
-  } catch {
+    // res.json({ message: "Login successful" })
+  } catch (err: unknown) {
+    console.log("LOGIN ERRROR", err)
     res.status(401).json({ error: "Invalid credentials" })
   }
 }
@@ -59,7 +60,8 @@ export const logout = async (req: Request, res: Response) => {
 }
 
 export const me = async (req: Request, res: Response) => {
-  const userId = (req as any).user.userId
+  console.log("request me", req)
+  const userId = Number((req as any).user.id)
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" })
   }
@@ -80,11 +82,11 @@ export const me = async (req: Request, res: Response) => {
 
 export const refresh = async (req: Request, res: Response) => {
   const cookies = req.cookies
-  if (!cookies?.jwt) {
-    res.sendStatus(401).json({ message: "Unauthorized" })
+  if (!cookies?.token) {
+    res.status(401).json({ message: "Unauthorized" })
     return
   }
-  const refreshToken = cookies.jwt
+  const refreshToken = cookies.token
 
   try {
     // const decoded = jwt.verify(
