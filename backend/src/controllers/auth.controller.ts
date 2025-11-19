@@ -5,6 +5,7 @@ import {
   loginUser,
   getUserById,
   refreshAccessToken,
+  logoutUser,
 } from "../services/auth.service"
 import { prisma } from "../config/db"
 import { getTokenDynamicPart } from "../utils/helpers"
@@ -20,22 +21,39 @@ export const signup = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const token = await loginUser(req.body.email, req.body.password)
-    res.cookie("token", token, { httpOnly: true, secure: true })
+    const { accessToken, refreshToken } = await loginUser(
+      req.body.email,
+      req.body.password
+    )
+    res.cookie("token", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000,
+    })
     // TODO:return user object ???
+    res.status(200).send({ accessToken })
     res.json({ message: "Login successful" })
   } catch {
     res.status(401).json({ error: "Invalid credentials" })
   }
 }
 
-export const logout = (req: Request, res: Response) => {
+export const logout = async (req: Request, res: Response) => {
+  const cookies = req.cookies
+  if (!cookies?.token) {
+    return res.status(204).json({ message: "No content" })
+  }
   try {
+    await logoutUser(cookies.token)
     res.clearCookie("token", { httpOnly: true, sameSite: "none", secure: true })
     console.log("logout successsss")
     res.sendStatus(204)
-  } catch (err) {
+  } catch (err: unknown) {
     console.log("Logout error:", err)
+    if (err instanceof Error && err.message === "Invalid credentials") {
+      return res.status(401).json({ error: "Invalid credentials" })
+    }
     res.status(500).json({ error: "Internal server error" })
   }
 }
