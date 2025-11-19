@@ -44,17 +44,15 @@ api.interceptors.response.use(
     if (
       error.response &&
       error.response.status === 401 &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !originalRequest?.url?.includes("auth/refresh")
     ) {
       originalRequest._retry = true
-      console.log("error response", error.response)
-      console.log("refreshing token...")
       try {
         const accessToken = await refreshAccessToken()
         setAccessToken(accessToken)
         axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`
         originalRequest.headers.Authorization = `Bearer ${accessToken}`
-        console.log("accessToken", accessToken)
         return api.request(originalRequest)
       } catch (err) {
         console.log("err", err)
