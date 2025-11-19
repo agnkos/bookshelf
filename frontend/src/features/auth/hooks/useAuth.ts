@@ -15,13 +15,12 @@ export const useAuth = () => {
   const loginMutation = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       login(email, password),
-    // onSuccess: (user) => queryClient.setQueryData(["user"], user),
     onSuccess: (data) => {
       const accessToken: string | null = data?.accessToken ?? null
       const user = data?.user ?? null
       setAccessToken(accessToken)
       if (user) {
-        queryClient.invalidateQueries({ queryKey: ["user"] })
+        queryClient.setQueryData(["user"], user)
       } else {
         userQuery.refetch()
       }
