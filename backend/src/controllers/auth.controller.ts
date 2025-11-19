@@ -1,6 +1,11 @@
 import { Request, Response } from "express"
 import jwt, { Secret } from "jsonwebtoken"
-import { signupUser, loginUser, getUserById } from "../services/auth.service"
+import {
+  signupUser,
+  loginUser,
+  getUserById,
+  refreshAccessToken,
+} from "../services/auth.service"
 import { prisma } from "../config/db"
 import { getTokenDynamicPart } from "../utils/helpers"
 
@@ -64,27 +69,23 @@ export const refresh = async (req: Request, res: Response) => {
   const refreshToken = cookies.jwt
 
   try {
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET as Secret
-    ) as any
-    // (err: jwt.VerifyErrors | null, decoded: any) => {
-    //   if (err) {
-    //     res.status(403).json({ message: "Invalid token" })
-    //     return
-    //   }
+    // const decoded = jwt.verify(
+    //   refreshToken,
+    //   process.env.REFRESH_TOKEN_SECRET as Secret
+    // ) as any
 
-    const dynamicToken = getTokenDynamicPart(refreshToken)
-    const user = await prisma.user.findFirst({
-      where: { refresh_token: dynamicToken },
-    })
-    if (!user || user.id !== decoded.id) {
-      return res.status(401).json({ message: "Invalid token" })
-    }
+    // const dynamicToken = getTokenDynamicPart(refreshToken)
+    // const user = await prisma.user.findFirst({
+    //   where: { refresh_token: dynamicToken },
+    // })
+    // if (!user || user.id !== decoded.id) {
+    //   return res.status(401).json({ message: "Invalid token" })
+    // }
 
-    const tokenData = {
-      id: decoded.id,
-    }
+    // const tokenData = {
+    //   id: decoded.id,
+    // }
+    const tokenData = await refreshAccessToken(refreshToken)
 
     const accessToken = jwt.sign(
       tokenData,
@@ -92,7 +93,10 @@ export const refresh = async (req: Request, res: Response) => {
       { expiresIn: "10min" }
     )
     res.json({ accessToken })
-  } catch (err) {
+  } catch (err: unknown) {
+    if (err instanceof Error && err.message === "Invalid token") {
+      return res.status(401).json({ message: "Invalid token" })
+    }
     res.status(500).json({ message: "Internal server error" })
   }
 }
