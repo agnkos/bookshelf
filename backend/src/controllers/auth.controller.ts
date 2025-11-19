@@ -21,7 +21,7 @@ export const signup = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { accessToken, refreshToken } = await loginUser(
+    const { accessToken, refreshToken, user } = await loginUser(
       req.body.email,
       req.body.password
     )
@@ -31,10 +31,10 @@ export const login = async (req: Request, res: Response) => {
       sameSite: "none",
       maxAge: 24 * 60 * 60 * 1000,
     })
-    // TODO:return user object ???
-    res.status(200).send({ accessToken })
-    // res.json({ message: "Login successful" })
+
+    res.status(200).json({ accessToken, user })
   } catch (err: unknown) {
+    // TO DO: fix diff errors
     console.log("LOGIN ERRROR", err)
     res.status(401).json({ error: "Invalid credentials" })
   }
@@ -72,7 +72,7 @@ export const me = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" })
     }
-
+    console.log("USER", user)
     res.json(user)
   } catch (err) {
     console.error("Error in meController:", err)

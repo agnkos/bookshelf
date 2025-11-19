@@ -17,10 +17,14 @@ export const useAuth = () => {
       login(email, password),
     // onSuccess: (user) => queryClient.setQueryData(["user"], user),
     onSuccess: (data) => {
-      const accessToken: string = data?.accessToken ?? null
+      const accessToken: string | null = data?.accessToken ?? null
+      const user = data?.user ?? null
       setAccessToken(accessToken)
-      userQuery.refetch()
-      queryClient.invalidateQueries({ queryKey: ["user"] })
+      if (user) {
+        queryClient.invalidateQueries({ queryKey: ["user"] })
+      } else {
+        userQuery.refetch()
+      }
     },
   })
 

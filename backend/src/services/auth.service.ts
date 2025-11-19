@@ -30,7 +30,7 @@ export const loginUser = async (email: string, password: string) => {
     where: { id: user.id },
     data: { refresh_token: dynamicToken },
   })
-  return { accessToken, refreshToken }
+  return { accessToken, refreshToken, user: { id: user.id, email: user.email } }
 }
 
 export const logoutUser = async (token: string) => {
